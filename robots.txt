@@ -1,0 +1,8 @@
+User-agent: * 
+Allow: /
+Allow: /archives/
+Disallow: /js/
+Disallow: /css/
+Disallow: /fonts/
+Sitemap: https://dayu.ink/sitemap.xml
+Sitemap: https://dayu.ink/baidusitemap.xml

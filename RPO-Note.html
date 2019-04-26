@@ -1,0 +1,207 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>RPO漏洞初探笔记 | Dayu | sCRiPt n00b</title>
+
+  
+  <meta name="author" content="大宇">
+  
+
+  
+  <meta name="description" content="不如就给自己最后一次机会，奔向或许永远无法到达的理想中，死在路上。">
+  
+
+  
+  <meta name="keywords" content="dayu,大宇,大宇的博客,网络">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="RPO漏洞初探笔记">
+
+  <meta property="og:site_name" content="Dayu">
+
+  
+  <meta property="og:image" content="/favicon.ico">
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Dayu" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+</head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">Dayu</a>
+    </h1>
+    <p class="site-description">sCRiPt n00b</p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/whoami">关于</a></li>
+      
+        <li><a href="/atom.xml">订阅</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>RPO漏洞初探笔记</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/RPO-Note.html" rel="bookmark">
+        <time class="entry-date published" datetime="2018-03-28T05:28:58.000Z">
+          2018-03-28
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="RPO攻击简介"><a href="#RPO攻击简介" class="headerlink" title="RPO攻击简介"></a>RPO攻击简介</h2><ul>
+<li>RPO（Relative Path Overwrite），意为相对路径覆盖，利用的是客户端浏览器与服务端url解析的差异而导致的漏洞。在引入相对路径的js/css文件处，通过一定的手法，加载我们可控的文件，按照js/css的语法执行，实现XSS等攻击。</li>
+</ul>
+<a id="more"></a>
+<h2 id="解析差异分析"><a href="#解析差异分析" class="headerlink" title="解析差异分析"></a>解析差异分析</h2><ul>
+<li><p>本地测试目录结构如下<br>roptest目录: <img src="https://oss.dayu.ink/RPO/1.png?x-oss-process=style/blog" alt><br>roptest/xxx目录: <img src="https://oss.dayu.ink/RPO/2.png?x-oss-process=style/blog" alt><br>roptest目录下的rop.php代码为</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">    &lt;head&gt;</span><br><span class="line">    &lt;title&gt;ROP&lt;/title&gt;</span><br><span class="line">        &lt;script src=./a.js&gt;&lt;/script&gt;</span><br><span class="line">    &lt;/head&gt;</span><br><span class="line">    &lt;body&gt;</span><br><span class="line">    	<span class="meta">&lt;?php</span> <span class="keyword">echo</span> <span class="string">"Hello dayu, this is roptest/rop.php"</span> <span class="meta">?&gt;</span></span><br><span class="line">    &lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>roptest目录下的a.js代码为</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alert(<span class="string">"I'm from roptest"</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>roptest/xxx目录下的a.js代码为</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alert(<span class="string">"I'm from xxx"</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>当我们使用chrome访问 <code>http://127.0.0.1/roptest/rop.php</code> 时：<br><img src="https://oss.dayu.ink/RPO/3.png?x-oss-process=style/blog" alt></p>
+</li>
+<li><p>访问 <code>http://127.0.0.1/roptest/xxx/..%2frop.php</code> 时：<br><img src="https://oss.dayu.ink/RPO/4.png?x-oss-process=style/blog" alt></p>
+</li>
+<li><p>至此，我们已经可以看出这种攻击的条件：<br>HTML代码中采用了相对路径来引入js或者css等文件<br>服务端能够正常解析%2f等url编码（刚开始自测nginx可以构成漏洞，apache不行，后来查了一下：apache如果要支持%2f的话，需要将AllowEncodedSlashes设置为On。一般在配置了pathinfo后，会将这个选项打开。）<br>客户端浏览器在寻找js资源的时候，并没有对%2f进行解码</p>
+</li>
+</ul>
+<h2 id="第二届强网杯-Share-your-mind"><a href="#第二届强网杯-Share-your-mind" class="headerlink" title="第二届强网杯 Share your mind"></a>第二届强网杯 Share your mind</h2><ul>
+<li><p>题目描述</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">http://39.107.33.96:20000</span><br><span class="line">Please help me find the vulnerability before I finish this site！</span><br><span class="line">hint：xss bot使用phantomjs，版本2.1.1</span><br><span class="line">hint2: xss的点不在report页面</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>这道题的漏洞点就在于RPO<br><img src="https://oss.dayu.ink/RPO/5.png?x-oss-process=style/blog" alt></p>
+</li>
+<li><p>复现过程<br>发表一个title为空,内容为<code>alert(1)</code>的article，访问为纯文本<br><img src="https://oss.dayu.ink/RPO/6.png?x-oss-process=style/blog" alt></p>
+</li>
+<li><p>由于站点使用了pathinfo的url模式，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://39.107.33.96:20000/index.php/view/article/1866</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>类似相当于</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://39.107.33.96:20000/index.php?m=view&amp;article=1866</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>同时，浏览器按照phpinfo的格式来解析url的话，只会访问到能识别的地方<br><img src="https://oss.dayu.ink/RPO/7.png?x-oss-process=style/blog" alt></p>
+</li>
+<li><p>所以，当我们访问</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://39.107.33.96:20000/index.php/view/article/1866/..%2f..%2f/</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>浏览器会到达</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://39.107.33.96:20000/index.php/view/</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>同时，该页面底部通过相对路径加载的两个js会去尝试加载</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">http://39.107.33.96:20000/index.php/view/article/1866/../static/js/jquery.min.js</span><br><span class="line">和http://39.107.33.96:20000/index.php/view/article/1866/../static/js/bootstrap.min.js</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>由于这两个文件不存在且加上上面的pathinfo原则，这两个<code>&lt;script src=&quot;&quot;&gt;</code>实际会加载</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://39.107.33.96:20000/index.php/view/article/1866</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>所以此时会出现两个alert(1)弹窗，形成了xss攻击。<br><img src="https://oss.dayu.ink/RPO/8.png?x-oss-process=style/blog" alt></p>
+</li>
+<li><p>最后，在report页面只能提交当前站点url，于是我们通过上述方法构造xss提交，”盲打”，获取到flag。<br><img src="https://oss.dayu.ink/RPO/9.png?x-oss-process=style/blog" alt></p>
+</li>
+<li><p>附上解决md5的脚本：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> multiprocessing</span><br><span class="line"><span class="keyword">from</span> os <span class="keyword">import</span> urandom</span><br><span class="line"><span class="keyword">from</span> hashlib <span class="keyword">import</span> md5</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">processor_number = multiprocessing.cpu_count()</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">work</span><span class="params">(cipher)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">100</span>):</span><br><span class="line">        plain = urandom(<span class="number">16</span>).encode(<span class="string">'hex'</span>)</span><br><span class="line">        <span class="keyword">if</span> md5(plain).hexdigest()[:<span class="number">6</span>] == cipher:</span><br><span class="line">            <span class="keyword">print</span> plain</span><br><span class="line">            sys.exit(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    cipher = raw_input(<span class="string">'md5:'</span>)</span><br><span class="line">    pool = multiprocessing.Pool(processes=processor_number)</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        plain = urandom(<span class="number">16</span>).encode(<span class="string">'hex'</span>)</span><br><span class="line">        pool.apply_async(work, (cipher, ))</span><br><span class="line">    pool.close()</span><br><span class="line">    pool.join()</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Web/">Web</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/Web/">Web</a><a href="/tags/RPO/">RPO</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    <br>
+    
+    &copy; 2019 大宇
+    
+  </p>
+</footer>
+    
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-135378097-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+
+  </div>
+</div>
+</body>
+</html>

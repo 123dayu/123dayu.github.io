@@ -1,0 +1,177 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>Sql盲注常用函数回顾 | Dayu | sCRiPt n00b</title>
+
+  
+  <meta name="author" content="大宇">
+  
+
+  
+  <meta name="description" content="不如就给自己最后一次机会，奔向或许永远无法到达的理想中，死在路上。">
+  
+
+  
+  <meta name="keywords" content="dayu,大宇,大宇的博客,网络">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="Sql盲注常用函数回顾">
+
+  <meta property="og:site_name" content="Dayu">
+
+  
+  <meta property="og:image" content="/favicon.ico">
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Dayu" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+</head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">Dayu</a>
+    </h1>
+    <p class="site-description">sCRiPt n00b</p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/whoami">关于</a></li>
+      
+        <li><a href="/atom.xml">订阅</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>Sql盲注常用函数回顾</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/Sql-blind-basic-function-review.html" rel="bookmark">
+        <time class="entry-date published" datetime="2017-10-05T08:08:58.000Z">
+          2017-10-05
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <ul>
+<li><p>CONCAT(str1,str2,…)<br>返回来自于参数连结的字符串。如果任何参数是NULL，返回NULL。可以有超过2个的参数。一个数字参数被变换为等价的字符串形式。</p>
+</li>
+<li><p>ASCII(str)<br>返回字符串str的最左面字符的ASCII代码值。如果str是空字符串，返回0。如果str是NULL，返回NULL。</p>
+</li>
+<li><p>ORD(str)<br>ORD()函数同ascii()，将字符转为ascii值</p>
+</li>
+</ul>
+<a id="more"></a>
+<ul>
+<li><p>SUBSTR(str,pos)<br>就是从pos开始的位置，一直截取到最后。<br>SUBSTR(str,pos,len)<br>pos开始的位置，截取len个字符(空白也算字符)。</p>
+</li>
+<li><p>mid()<br>截取字符串一部分<br>MID(column_name,start,length)<br>column_name:必需.要提取字符的字段<br>start:必需.规定开始位置（起始值是 1）<br>length:可选.要返回的字符数.如果省略,则 MID() 函数返回剩余文本<br>MID(DATABASE(),1,1)&gt;’a’,查看数据库名第一位，MID(DATABASE(),2,1)查看数据库名第二位，依次查看各位字符<br>MID((sql语句),1,1)&gt;’a’此处column_name参数可以为sql语句，可自行构造sql语句进行注入</p>
+</li>
+<li><p>LEFT(str,len)<br>返回字符串str的最左面len个字符。</p>
+</li>
+<li><p>RIGHT(str,len)<br>返回字符串str的最右面len个字符。</p>
+</li>
+<li><p>ISNULL(expr) 的用法：<br>如expr 为null，那么isnull() 的返回值为 1，否则返回值为 0</p>
+</li>
+<li><p>IFNULL(expr1,expr2)的用法：<br>假如expr1不为NULL，则IFNULL()的返回值为expr1; 否则其返回值为expr2</p>
+</li>
+<li><p>NULLIF(expr1,expr2) 的用法：<br>如果expr1=expr2成立，那么返回值为NULL，否则返回值为expr1</p>
+</li>
+<li><p>regexp正则注入<br>用法介绍：select user() regexp ‘^[a-z]’;<br>Explain：正则表达式的用法，user()结果为root，regexp为匹配root的正则表达式。<br>第二位可以用select user() regexp ‘^ro’来进行。<br>当正确的时候显示结果为1，不正确的时候显示结果为0。</p>
+</li>
+</ul>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Web/">Web</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/Web/">Web</a><a href="/tags/Sql/">Sql</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    <br>
+    
+    &copy; 2019 大宇
+    
+  </p>
+</footer>
+    
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-135378097-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+
+  </div>
+</div>
+</body>
+</html>

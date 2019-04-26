@@ -1,0 +1,157 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>类Unix/Linux系统下使用ssh-keygen设置SSH无密码登录 | Dayu | sCRiPt n00b</title>
+
+  
+  <meta name="author" content="大宇">
+  
+
+  
+  <meta name="description" content="不如就给自己最后一次机会，奔向或许永远无法到达的理想中，死在路上。">
+  
+
+  
+  <meta name="keywords" content="dayu,大宇,大宇的博客,网络">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="类Unix/Linux系统下使用ssh-keygen设置SSH无密码登录">
+
+  <meta property="og:site_name" content="Dayu">
+
+  
+  <meta property="og:image" content="/favicon.ico">
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Dayu" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+</head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">Dayu</a>
+    </h1>
+    <p class="site-description">sCRiPt n00b</p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/whoami">关于</a></li>
+      
+        <li><a href="/atom.xml">订阅</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>类Unix/Linux系统下使用ssh-keygen设置SSH无密码登录</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/SSH-Keygen.html" rel="bookmark">
+        <time class="entry-date published" datetime="2017-09-30T13:16:39.000Z">
+          2017-09-30
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>..<br><a id="more"></a></p>
+<h4 id="一、环境"><a href="#一、环境" class="headerlink" title="一、环境"></a>一、环境</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a机器(Kali)：192.168.43.31</span><br><span class="line">b机器(Ubuntu)：192.168.43.30</span><br></pre></td></tr></table></figure>
+<h4 id="二、用ssh-keygen创建密钥"><a href="#二、用ssh-keygen创建密钥" class="headerlink" title="二、用ssh-keygen创建密钥"></a>二、用ssh-keygen创建密钥</h4><p>在kali上执行命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://oss.dayu.ink/ssh-keygen/ssh1.png?x-oss-process=style/blog" alt><br>-t 指定算法</p>
+<p>会生成这两个文件<br><img src="https://oss.dayu.ink/ssh-keygen/ssh2.png?x-oss-process=style/blog" alt><br>其中id_rsa为私钥，放在管理端，id_rsa.pub为公钥，放在被管理端。</p>
+<h4 id="三、被管理端配置"><a href="#三、被管理端配置" class="headerlink" title="三、被管理端配置"></a>三、被管理端配置</h4><p>将公钥文件id_rsa.pub，复制到被管理机器ubuntu下的.ssh目录下（先确保存在这个目录）<br>在ubuntu下执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cat id_dsa.pub &gt;&gt; ~/.ssh/authorized_keys</span><br><span class="line">设置authorized_keys权限</span><br><span class="line">chmod 600 authorized_keys</span><br><span class="line">设置.ssh目录权限</span><br><span class="line">chmod 700 .ssh</span><br></pre></td></tr></table></figure></p>
+<h4 id="四、连接测试"><a href="#四、连接测试" class="headerlink" title="四、连接测试"></a>四、连接测试</h4><p><img src="https://oss.dayu.ink/ssh-keygen/ssh3.png?x-oss-process=style/blog" alt><br>无密码连接成功</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Linux/">Linux</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/Linux/">Linux</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    <br>
+    
+    &copy; 2019 大宇
+    
+  </p>
+</footer>
+    
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-135378097-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+
+  </div>
+</div>
+</body>
+</html>
